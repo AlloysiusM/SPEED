@@ -1,4 +1,4 @@
-name: Integration Pipeline
+name: Backend CI
 
 on:
   push:
@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,10 +22,16 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd backend
+          npm install
 
       - name: Run tests
-        run: npm test
+        run: |
+          cd backend
+          npm test
 
-      - name: Build project
-        run: npm run build
+      - name: Build
+        run: |
+          cd backend
+          npm run build
