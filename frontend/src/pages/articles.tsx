@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface Article {
     _id: string;
@@ -9,7 +10,7 @@ interface Article {
 
 const ArticlesPage = () => {
     const [articles, setArticles] = useState<Article[]>([]);
-    const [error, setError] = useState<string | null>(null); // For error handling
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchArticles = async () => {
@@ -41,7 +42,6 @@ const ArticlesPage = () => {
                 throw new Error('Failed to update status');
             }
             const updatedArticle = await response.json();
-            // Update the articles state
             setArticles(prevArticles =>
                 prevArticles.map(article => (article._id === updatedArticle._id ? updatedArticle : article))
             );
@@ -51,20 +51,25 @@ const ArticlesPage = () => {
     };
 
     return (
-        <div className="container"> {/* Add container class */}
+        <div className="container"> {/* Wrap in a container for styling */}
             <h1>Articles</h1>
-            {error && <p>{error}</p>} {/* Display error message if any */}
-            {articles.length === 0 ? ( // Check if there are no articles
-                <p>No articles available.</p> // Display this message if no articles are found
+            <Link href="/notifications">View Notifications</Link>
+            {error && <p>{error}</p>}
+            {articles.length === 0 ? (
+                <p>No articles available.</p>
             ) : (
                 <ul>
                     {articles.map(article => (
-                        <li key={article._id} className="article"> {/* Add article class */}
+                        <li key={article._id} className="article"> {/* Add article class here */}
                             <h2>{article.title}</h2>
                             <p>{article.content}</p>
                             <p className="status">Status: {article.status}</p>
-                            <button className="button" onClick={() => updateArticleStatus(article._id, 'accepted')}>Accept</button>
-                            <button className="button" onClick={() => updateArticleStatus(article._id, 'rejected')}>Reject</button>
+                            <button className="button" onClick={() => updateArticleStatus(article._id, 'accepted')}>
+                                Accept
+                            </button>
+                            <button className="button" onClick={() => updateArticleStatus(article._id, 'rejected')}>
+                                Reject
+                            </button>
                         </li>
                     ))}
                 </ul>
