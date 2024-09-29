@@ -98,7 +98,7 @@ export default function Component() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Article Review Table</h1>
+      <h1 className="text-2xl font-bold mb-4">Moderator Article List</h1>
       <Table>
         <TableHeader>
           <TableRow>
