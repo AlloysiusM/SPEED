@@ -5,6 +5,7 @@ export default function SubmitArticle() {
     title: "",
     author: "",
     url: "",
+    email: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,6 +80,18 @@ export default function SubmitArticle() {
             className="w-full px-3 py-2 border rounded"
           />
         </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1" htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -89,3 +102,4 @@ export default function SubmitArticle() {
     </div>
   );
 }
+

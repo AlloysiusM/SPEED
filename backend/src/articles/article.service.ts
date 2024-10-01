@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Article } from './schemas/article.schema';
+import { EmailService } from '../emails/email.service'; // Import EmailService
 
 @Injectable()
 export class ArticleService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<Article>,
+    private emailService: EmailService, // Inject EmailService
   ) {}
 
   async getPendingArticles() {
@@ -26,13 +28,15 @@ export class ArticleService {
       .exec();
     return !!existingArticle;
   }
+
   // Submit a new article
   async submitArticle(
     title: string,
     author: string,
     url: string,
+    email: string, // Add email parameter here
   ): Promise<Article> {
-    const newArticle = new this.articleModel({ title, author, url });
+    const newArticle = new this.articleModel({ title, author, url, email }); // Include email in the new article
     return newArticle.save();
   }
 
@@ -45,6 +49,15 @@ export class ArticleService {
       )
       .exec();
 
+    if (updatedArticle) {
+      // Send an email notification after accepting the article
+      await this.emailService.sendEmail(
+        updatedArticle.email, // Use the email from the article
+        'Your Article Has Been Accepted',
+        `Congratulations! Your article "${updatedArticle.title}" has been accepted.`,
+      );
+    }
+
     return updatedArticle;
   }
 
@@ -52,7 +65,7 @@ export class ArticleService {
     const updatedArticle = await this.articleModel
       .findByIdAndUpdate(
         articleId,
-        { status: 'rejected' }, // Update the status to 'accepted'
+        { status: 'rejected' }, // Update the status to 'rejected'
         { new: true }, // Return the updated document
       )
       .exec();

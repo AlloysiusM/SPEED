@@ -1,24 +1,28 @@
 import {
-  Controller,
-  Post,
-  Body,
   BadRequestException,
+  Body,
+  Controller,
   Get,
+  Post,
   Put,
   Param,
 } from '@nestjs/common';
+
 import { ArticleService } from './article.service';
-import { Console } from 'console';
-import { Article } from './schemas/article.schema';
+import { EmailService } from '../emails/email.service'; // Import your EmailService
 
 @Controller('articles')
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly articleService: ArticleService,
+    private readonly emailService: EmailService, // Inject EmailService
+  ) {}
 
+  // Add this method
   @Get('pending')
   async getPendingArticles() {
-    const articles = await this.articleService.getPendingArticles()
-    return articles;
+    const pendingArticles = await this.articleService.getPendingArticles();
+    return pendingArticles;
   }
 
   @Post('submit')
@@ -26,6 +30,7 @@ export class ArticleController {
     @Body('title') title: string,
     @Body('author') author: string,
     @Body('url') url: string,
+    @Body('email') email: string, // Add email parameter
   ) {
     try {
       const isDuplicate = await this.articleService.isArticleDuplicate(
@@ -43,30 +48,53 @@ export class ArticleController {
         title,
         author,
         url,
+        email, // Pass email to the service
       );
+
+      // Optionally send a confirmation email
+      await this.emailService.sendEmail(
+        email,
+        'Article Submission Confirmation',
+        `Thank you for submitting your article "${title}". It is currently pending approval.`,
+      );
+
       return {
         message: 'Article submitted successfully!',
         article: newArticle,
       };
     } catch (error) {
       console.log(error);
+      throw new BadRequestException('Failed to submit the article.');
     }
   }
+
   @Put(':id/accept')
-  async acceptArticle(
-   @Param('id')
-   id: string,
-  ){
-    console.log('id');
-    return await this.articleService.acceptArticle(id);
+  async acceptArticle(@Param('id') id: string) {
+    const article = await this.articleService.acceptArticle(id);
+
+    if (article) {
+      await this.emailService.sendEmail(
+        article.email, // Send email to the user's email
+        'Your Article Has Been Accepted',
+        `Congratulations! Your article "${article.title}" has been accepted.`,
+      );
+    }
+
+    return article;
   }
-  
+
   @Put(':id/reject')
-  async rejectArticle(
-   @Param('id')
-   id: string,
-  ){
-    console.log('id');
-    return await this.articleService.rejectArticle(id);
+  async rejectArticle(@Param('id') id: string) {
+    const article = await this.articleService.rejectArticle(id);
+
+    if (article) {
+      await this.emailService.sendEmail(
+        article.email, // Send email to the user's email
+        'Your Article Has Been Rejected',
+        `We're sorry to inform you that your article "${article.title}" has been rejected.`,
+      );
+    }
+
+    return article;
   }
 }

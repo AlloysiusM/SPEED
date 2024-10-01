@@ -9,6 +9,8 @@ export class Article extends Document {
   author: string;
   @Prop({ required: true })
   url: string;
+  @Prop({ required: true })
+  email: string;
   @Prop({ default: 'pending' }) // queued, rejected, accepted
   status: string;
 }
