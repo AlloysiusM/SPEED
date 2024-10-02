@@ -11,9 +11,13 @@ import { RejectedArticle, RejectedArticleSchema } from './articles/schemas/rejec
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.DB_URI),
-    MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
-    MongooseModule.forFeature([{ name: AcceptedArticle.name, schema: AcceptedArticleSchema }]),
-    MongooseModule.forFeature([{ name: RejectedArticle.name, schema: RejectedArticleSchema }]),
+    MongooseModule.forFeature([
+      { name: Article.name, schema: ArticleSchema },
+      { name: AcceptedArticle.name, schema: AcceptedArticleSchema, collection: 'accepted' },
+      { name: RejectedArticle.name, schema: RejectedArticleSchema, collection: 'rejected' },
+    ]),
   ],
+  controllers: [ArticleController],
+  providers: [ArticleService],
 })
 export class AppModule {}
