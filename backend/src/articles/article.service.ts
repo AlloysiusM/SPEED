@@ -34,10 +34,19 @@ export class ArticleService {
     title: string,
     author: string,
     url: string,
-    email: string, // Add email parameter here
+    email: string,
   ): Promise<Article> {
-    const newArticle = new this.articleModel({ title, author, url, email }); // Include email in the new article
-    return newArticle.save();
+    const newArticle = new this.articleModel({ title, author, url, email });
+    await newArticle.save(); // Save the article
+
+    // Notify the moderator about the new article submission
+    await this.emailService.sendEmail(
+      process.env.MODERATOR_EMAIL, // Moderator's email address
+      'New Article Submitted',
+      `A new article titled "${newArticle.title}" has been submitted by ${newArticle.author}.`
+    );
+
+    return newArticle;
   }
 
   async acceptArticle(articleId: string): Promise<Article | null> {
