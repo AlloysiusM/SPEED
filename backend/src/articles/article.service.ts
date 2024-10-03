@@ -3,11 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Article } from './schemas/article.schema';
 import { EmailService } from '../emails/email.service'; // Import EmailService
+import { RejectedArticle } from './schemas/rejectedarticle.schema';
+import { AcceptedArticle } from './schemas/acceptedarticle.schema';
+import { constants } from 'buffer';
 
 @Injectable()
 export class ArticleService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<Article>,
+    @InjectModel(AcceptedArticle.name)
+    private acceptedArticlesModel: Model<AcceptedArticle>,
+    @InjectModel(RejectedArticle.name)
+    private rejectedArticlesModel: Model<RejectedArticle>,
     private emailService: EmailService, // Inject EmailService
   ) {}
 
@@ -59,12 +66,21 @@ export class ArticleService {
       .exec();
 
     if (updatedArticle) {
+      //put accepted branch
+      await this.acceptedArticlesModel.create({
+        title: updatedArticle.title,
+        author: updatedArticle.author,
+        url: updatedArticle.url,
+        email: updatedArticle.email,
+        status: 'accepted', // Set the status to accepted
+      });
+
       // Send an email notification after accepting the article
-      await this.emailService.sendEmail(
-        updatedArticle.email, // Use the email from the article
-        'Your Article Has Been Accepted',
-        `Congratulations! Your article "${updatedArticle.title}" has been accepted.`,
-      );
+      // await this.emailService.sendEmail(
+      //   updatedArticle.email, // Use the email from the article
+      //   'Your Article Has Been Accepted',
+      //   `Congratulations! Your article "${updatedArticle.title}" has been accepted.`,
+      // );
     }
 
     return updatedArticle;
@@ -78,6 +94,14 @@ export class ArticleService {
         { new: true }, // Return the updated document
       )
       .exec();
+    //put rejected branch
+    await this.rejectedArticlesModel.create({
+      title: updatedArticle.title,
+      author: updatedArticle.author,
+      url: updatedArticle.url,
+      email: updatedArticle.email,
+      status: 'rejected', // Set the status to accepted
+    });
 
     return updatedArticle;
   }
