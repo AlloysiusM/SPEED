@@ -4,9 +4,14 @@ export default function SubmitArticle() {
   const [formData, setFormData] = useState({
     title: "",
     author: "",
-    url: "",
+    journel: "",
+    yearOfPub: "",
+    volume: "",
+    numberOfPages: "",
+    doi: "",
+    email: "",
   });
-
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -68,12 +73,72 @@ export default function SubmitArticle() {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1" htmlFor="url">URL</label>
+          <label className="block text-sm font-medium mb-1" htmlFor="journel">Journel</label>
           <input
-            type="url"
-            id="url"
-            name="url"
-            value={formData.url}
+            type="journel"
+            id="journel"
+            name="journel"
+            value={formData.journel}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1" htmlFor="yearOfPub">Year of Publication</label>
+          <input
+            type="yearOfPub"
+            id="yearOfPub"
+            name="yearOfPub"
+            value={formData.yearOfPub}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1" htmlFor="volume">Volume</label>
+          <input
+            type="volume"
+            id="volume"
+            name="volume"
+            value={formData.volume}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1" htmlFor="numberOfPages">Number of Pages</label>
+          <input
+            type="numberOfPages"
+            id="numberOfPages"
+            name="numberOfPages"
+            value={formData.numberOfPages}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1" htmlFor="doi">DOI</label>
+          <input
+            type="doi"
+            id="doi"
+            name="doi"
+            value={formData.doi}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1" htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border rounded"
@@ -89,3 +154,4 @@ export default function SubmitArticle() {
     </div>
   );
 }
+

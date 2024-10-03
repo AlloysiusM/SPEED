@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema()
-export class Article extends Document {
+export class RejectedArticle extends Document {
   @Prop({ required: true })
   title: string;
   @Prop({ required: true })
@@ -22,4 +22,4 @@ export class Article extends Document {
   @Prop({ default: 'pending' }) // queued, rejected, accepted
   status: string;
 }
-export const ArticleSchema = SchemaFactory.createForClass(Article);
+export const RejectedArticleSchema = SchemaFactory.createForClass(RejectedArticle);
