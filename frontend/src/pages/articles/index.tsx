@@ -4,20 +4,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { CheckIcon, XIcon } from 'lucide-react'
 
+// Updated Article interface with additional fields
 interface Article {
   _id: string;
   title: string;
   author: string;
-  url: string;
+  journel: string; // Correct spelling of "journal"
+  yearOfPub: string;
+  volume: string;
+  numberOfPages: string;
+  doi: string;
   status: string;
 }
 
 export default function Component() {
-  const [articles, setArticles] = useState<Article[]>([
-  ])
+  const [articles, setArticles] = useState<Article[]>([])
 
-  useEffect
-  (() => {
+  useEffect(() => {
     const fetchArticles = async () => {
       try {
         const response = await fetch("http://localhost:8082/articles/pending", {
@@ -35,7 +38,7 @@ export default function Component() {
         
         setArticles(data);
       } catch (err) {
-        
+        console.error(err); // Handle error appropriately
       }
     };
 
@@ -45,7 +48,7 @@ export default function Component() {
   const handleAccept = async (articleId: string) => {
     try {
       const response = await fetch(`http://localhost:8082/articles/${articleId}/accept`, {
-        method: "PUT", // Or PUT, depending on your API design
+        method: "PUT", // Use PUT method
         headers: {
           "Content-Type": "application/json",
         },
@@ -60,9 +63,7 @@ export default function Component() {
   
       // Optionally update the articles list after accepting
       setArticles(prevArticles =>
-        prevArticles.filter(article =>
-          article._id !== articleId 
-        )
+        prevArticles.filter(article => article._id !== articleId)
       );
     } catch (err) {
       console.error(err);
@@ -72,7 +73,7 @@ export default function Component() {
   const handleReject = async (articleId: string) => {
     try {
       const response = await fetch(`http://localhost:8082/articles/${articleId}/reject`, {
-        method: "PUT", // Or PUT, depending on your API design
+        method: "PUT", // Use PUT method
         headers: {
           "Content-Type": "application/json",
         },
@@ -83,13 +84,11 @@ export default function Component() {
       }
   
       const rejectedArticle = await response.json();
-      console.log('Reject article:', rejectedArticle);
+      console.log('Rejected article:', rejectedArticle);
   
-      // Optionally update the articles list after accepting
+      // Optionally update the articles list after rejecting
       setArticles(prevArticles =>
-        prevArticles.filter(article =>
-          article._id !== articleId 
-        )
+        prevArticles.filter(article => article._id !== articleId)
       );
     } catch (err) {
       console.error(err);
@@ -104,7 +103,11 @@ export default function Component() {
           <TableRow>
             <TableHead>Title</TableHead>
             <TableHead>Author</TableHead>
-            <TableHead>URL</TableHead>
+            <TableHead>Journal</TableHead>
+            <TableHead>Year of Publication</TableHead>
+            <TableHead>Volume</TableHead>
+            <TableHead>Number of Pages</TableHead>
+            <TableHead>DOI</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -114,13 +117,13 @@ export default function Component() {
             <TableRow key={article._id}>
               <TableCell>{article.title}</TableCell>
               <TableCell>{article.author}</TableCell>
+              <TableCell>{article.journel}</TableCell>
+              <TableCell>{article.yearOfPub}</TableCell>
+              <TableCell>{article.volume}</TableCell>
+              <TableCell>{article.numberOfPages}</TableCell>
+              <TableCell>{article.doi}</TableCell>
               <TableCell>
-                <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                  {article.url.length > 30 ? article.url.substring(0, 30) + '...' : article.url}
-                </a>
-              </TableCell>
-              <TableCell>
-                <Badge >
+                <Badge>
                   {article.status}
                 </Badge>
               </TableCell>

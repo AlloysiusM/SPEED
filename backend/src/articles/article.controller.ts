@@ -9,13 +9,13 @@ import {
 } from '@nestjs/common';
 
 import { ArticleService } from './article.service';
-import { EmailService } from '../emails/email.service'; // Import your EmailService
+import { EmailService } from '../emails/email.service';
 
 @Controller('articles')
 export class ArticleController {
   constructor(
     private readonly articleService: ArticleService,
-    private readonly emailService: EmailService, // Inject EmailService
+    private readonly emailService: EmailService,
   ) {}
 
   // Add this method
@@ -29,13 +29,18 @@ export class ArticleController {
   async submitArticle(
     @Body('title') title: string,
     @Body('author') author: string,
-    @Body('url') url: string,
-    @Body('email') email: string, // Add email parameter
+    @Body('journel') journel: string,
+    @Body('yearOfPub') yearOfPub: string,
+    @Body('volume') volume: string,
+    @Body('numberOfPages') numberOfPages: string,
+    @Body('doi') doi: string,
+    @Body('email') email: string,
+
   ) {
     try {
       const isDuplicate = await this.articleService.isArticleDuplicate(
         title,
-        url,
+        doi,
       );
 
       if (isDuplicate) {
@@ -47,11 +52,15 @@ export class ArticleController {
       const newArticle = await this.articleService.submitArticle(
         title,
         author,
-        url,
+        journel,
+        yearOfPub,
+        volume,
+        numberOfPages,
+        doi,
         email, // Pass email to the service
       );
 
-      // Optionally send a confirmation email
+      // Send a confirmation email
       await this.emailService.sendEmail(
         email,
         'Article Submission Confirmation',
