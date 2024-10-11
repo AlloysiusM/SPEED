@@ -26,10 +26,10 @@ export class ArticleService {
   }
 
   // Check if the article is already in the queue or rejected
-  async isArticleDuplicate(title: string, url: string): Promise<boolean> {
+  async isArticleDuplicate(title: string, doi: string): Promise<boolean> {
     const existingArticle = await this.articleModel
       .findOne({
-        $or: [{ title: title }, { url: url }],
+        $or: [{ title: title }, { doi: doi }],
         status: { $in: ['pending', 'rejected'] },
       })
       .exec();
@@ -40,10 +40,14 @@ export class ArticleService {
   async submitArticle(
     title: string,
     author: string,
-    url: string,
+    journel: string,
+    yearOfPub: string,
+    volume: string,
+    numberOfPages: string,
+    doi: string,
     email: string,
   ): Promise<Article> {
-    const newArticle = new this.articleModel({ title, author, url, email });
+    const newArticle = new this.articleModel({ title, author, journel, yearOfPub, volume, numberOfPages, doi, email });
     await newArticle.save(); // Save the article
 
     // Notify the moderator about the new article submission
@@ -70,7 +74,11 @@ export class ArticleService {
       await this.acceptedArticlesModel.create({
         title: updatedArticle.title,
         author: updatedArticle.author,
-        url: updatedArticle.url,
+        journel: updatedArticle.journel,
+        yearOfPub: updatedArticle.yearOfPub,
+        volume: updatedArticle.volume,
+        numberOfPages: updatedArticle.numberOfPages,
+        doi: updatedArticle.doi,
         email: updatedArticle.email,
         status: 'accepted', // Set the status to accepted
       });
@@ -98,7 +106,11 @@ export class ArticleService {
     await this.rejectedArticlesModel.create({
       title: updatedArticle.title,
       author: updatedArticle.author,
-      url: updatedArticle.url,
+      journel: updatedArticle.journel,
+      yearOfPub: updatedArticle.yearOfPub,
+      volume: updatedArticle.volume,
+      numberOfPages: updatedArticle.numberOfPages,
+      doi: updatedArticle.doi,
       email: updatedArticle.email,
       status: 'rejected', // Set the status to accepted
     });
