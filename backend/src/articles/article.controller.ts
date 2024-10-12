@@ -25,6 +25,18 @@ export class ArticleController {
     return pendingArticles;
   }
 
+  @Get('accepted-articles')
+  async getAcceptedArticles() {
+    const getAcceptedArticles = await this.articleService.getAcceptedArticles();
+    return getAcceptedArticles;
+  }
+
+  @Get('accepted-articles/:id')
+  async getAcceptedArticle(@Param('id') id:string) {
+    const getAcceptedArticle = await this.articleService.getAcceptedArticle(id);
+    return getAcceptedArticle;
+  }
+
   @Post('submit')
   async submitArticle(
     @Body('title') title: string,
@@ -35,7 +47,6 @@ export class ArticleController {
     @Body('numberOfPages') numberOfPages: string,
     @Body('doi') doi: string,
     @Body('email') email: string,
-
   ) {
     try {
       const isDuplicate = await this.articleService.isArticleDuplicate(

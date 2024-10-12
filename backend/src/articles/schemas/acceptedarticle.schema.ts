@@ -13,8 +13,10 @@ export class AcceptedArticle extends Document {
   yearOfPub: string;
   @Prop({ required: true })
   volume: string;
-
-
+  @Prop({ required: true })
+  numberOfPages: string;
+  @Prop({ required: true })
+  doi: string;
   @Prop({ required: true })
   email: string;
   @Prop({ default: 'pending' }) // queued, rejected, accepted

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Article } from './schemas/article.schema';
 import { EmailService } from '../emails/email.service'; // Import EmailService
 import { RejectedArticle } from './schemas/rejectedarticle.schema';
@@ -23,6 +23,21 @@ export class ArticleService {
       status: 'pending',
     });
     return pendingArticles;
+  }
+
+  async getAcceptedArticles() {
+    const getAcceptedArticles = await this.acceptedArticlesModel.find({
+      status: 'accepted',
+    });
+    return getAcceptedArticles;
+  }
+
+  async getAcceptedArticle(id: string) {
+    const getAcceptedArticle = await this.acceptedArticlesModel.find({
+      status: 'accepted',
+      _id: new Types.ObjectId(id),
+    });
+    return getAcceptedArticle;
   }
 
   // Check if the article is already in the queue or rejected

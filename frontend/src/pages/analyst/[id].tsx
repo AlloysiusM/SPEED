@@ -1,10 +1,16 @@
 import { useState } from "react";
+import { useRouter } from 'next/router';
 
 export default function SubmitArticle() {
+  const router = useRouter();
+  const { id } = router.query;
+
+  console.log(id);
+  
   const [formData, setFormData] = useState({
     title: "",
     author: "",
-    journel: "",
+    journel: "", 
     yearOfPub: "",
     volume: "",
     numberOfPages: "",
@@ -147,7 +153,7 @@ export default function SubmitArticle() {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1" htmlFor="summary">Summary</label>
-          <textarea
+          <input
             id="summary"
             name="summary"
             value={formData.summary}

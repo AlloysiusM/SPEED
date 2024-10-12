@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { useParams } from 'next/navigation';
 
 interface Article {
   _id: string;
@@ -16,12 +17,13 @@ interface Article {
 }
 
 export default function Component() {
+  
   const [articles, setArticles] = useState<Article[]>([])
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch("http://localhost:8082/articles/pending", {
+        const response = await fetch("http://localhost:8082/articles/accepted-articles", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -32,7 +34,6 @@ export default function Component() {
           throw new Error('Failed to fetch articles');
         }
         const data: Article[] = await response.json();
-        console.log(data);
         
         setArticles(data);
       } catch (err) {
@@ -79,7 +80,7 @@ export default function Component() {
                 <div className="flex space-x-2">
                 <a
             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="http://localhost:3000/analyst"
+            href= {`http://localhost:3000/analyst/${article._id}`}
             >
             Go to Analyst Page
             </a>
