@@ -32,7 +32,7 @@ export class ArticleController {
   }
 
   @Get('accepted-articles/:id')
-  async getAcceptedArticle(@Param('id') id:string) {
+  async getAcceptedArticle(@Param('id') id: string) {
     const getAcceptedArticle = await this.articleService.getAcceptedArticle(id);
     return getAcceptedArticle;
   }
@@ -116,5 +116,58 @@ export class ArticleController {
     }
 
     return article;
+  }
+
+  @Post('submit-extracted-articles')
+  async extractArticle(
+    @Body('title') title: string,
+    @Body('author') author: string,
+    @Body('journel') journel: string,
+    @Body('yearOfPub') yearOfPub: string,
+    @Body('volume') volume: string,
+    @Body('numberOfPages') numberOfPages: string,
+    @Body('doi') doi: string,
+    @Body('category') category: string,
+    @Body('summary') summary: string,
+  ) {
+    try {
+      console.log(title, author, journel, yearOfPub, volume, numberOfPages, doi, category, summary);
+      
+      const isDuplicate = await this.articleService.isExtractedArticleDuplicate(
+        title,
+        doi,
+      );
+
+      if (isDuplicate) {
+        throw new BadRequestException('This article is already extracted.');
+      }
+
+      const newExtract = await this.articleService.extractArticle(
+        title,
+        author,
+        journel,
+        yearOfPub,
+        volume,
+        numberOfPages,
+        doi,
+        category,
+        summary,
+      );
+
+      // Send a confirmation email
+      /*await this.emailService.sendEmail(
+        email,
+        'Article Submission Confirmation',
+        `Thank you for submitting your article "${title}". It is currently pending approval.`,
+      );*/
+
+      return {
+        message: 'Extracted submitted successfully!',
+        article: newExtract,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Failed to extract the article.');
+    }
   }
 }

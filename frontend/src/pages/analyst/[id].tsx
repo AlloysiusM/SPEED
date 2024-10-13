@@ -30,13 +30,15 @@ export default function SubmitArticle() {
     try {
       e.preventDefault();
     // Submit the form data to the API
-    const response = await fetch("http://localhost:8082/articles/analyst", {
+    const response = await fetch("http://localhost:8082/articles/submit-extracted-articles", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
+    console.log(formData);
+    
     console.log(response);
     
     
