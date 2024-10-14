@@ -98,6 +98,14 @@ export class ArticleController {
         'Your Article Has Been Accepted',
         `Congratulations! Your article "${article.title}" has been accepted.`,
       );
+
+      // Send email to Analyst
+      const analystEmail = process.env.MODERATOR_EMAIL;
+      await this.emailService.sendEmail(
+      analystEmail, // Analyst's email
+      'New Accepted Article in Queue',
+      `A new article titled "${article.title}" has been accepted by a moderator and is ready for analysis.`,
+    );
     }
 
     return article;
