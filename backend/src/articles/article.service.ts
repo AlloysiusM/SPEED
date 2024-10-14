@@ -195,4 +195,19 @@ export class ArticleService {
     return newExtract;
   }
 
+  // Search for extracted articles
+  // Search function to find articles by title or author
+  async search(query: string): Promise<ExtractedArticle[]> {
+    const searchRegex = new RegExp(query, 'i'); // 'i' flag makes the search case-insensitive
+
+    return await this.extractedArticleModel
+      .find({
+        $or: [
+          { title: { $regex: searchRegex } }, // Search by title
+          { author: { $regex: searchRegex } }, // Search by author
+      ],
+      })
+      .exec();
+  }
+
 }

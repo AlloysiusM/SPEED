@@ -22,7 +22,7 @@ export default function Component() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch("http://localhost:8082/articles/extracted-articles", {
+        const response = await fetch("http://localhost:8082/articles/search", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -44,12 +44,29 @@ export default function Component() {
     fetchArticles();
   }, []);
 
-  const handleSearch = () => {
-    const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = articles.filter(article => 
-      article.title.toLowerCase().includes(lowercasedQuery)
-    );
-    setFilteredArticles(filtered);
+  const handleSearch = async () => {
+    if (!searchQuery) {
+      setFilteredArticles(articles);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`http://localhost:8082/articles/search?query=${searchQuery}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch articles');
+      }
+
+      const data: Article[] = await response.json();
+      setFilteredArticles(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleReset = () => {
@@ -80,8 +97,8 @@ export default function Component() {
             <TableHead>Author</TableHead>
             <TableHead>Year of Publication</TableHead>
             <TableHead>Volume</TableHead>
-            <TableHead>Category</TableHead>   {/* Added Category Column */}
-            <TableHead className="w-1/3">Summary</TableHead>  {/* Increased width for Summary Column */}
+            <TableHead>Category</TableHead>
+            <TableHead className="w-1/3">Summary</TableHead>
             <TableHead>DOI</TableHead>
           </TableRow>
         </TableHeader>
@@ -93,8 +110,8 @@ export default function Component() {
                 <TableCell>{article.author}</TableCell>
                 <TableCell>{article.yearOfPub}</TableCell>
                 <TableCell>{article.volume}</TableCell>
-                <TableCell>{article.category}</TableCell>   {/* Display Category */}
-                <TableCell className="break-words">{article.summary}</TableCell>    {/* Display Summary */}
+                <TableCell>{article.category}</TableCell>
+                <TableCell className="break-words">{article.summary}</TableCell>
                 <TableCell>{article.doi}</TableCell>
               </TableRow>
             ))

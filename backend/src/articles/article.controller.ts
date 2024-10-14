@@ -6,6 +6,7 @@ import {
   Post,
   Put,
   Param,
+  Query,
 } from '@nestjs/common';
 
 import { ArticleService } from './article.service';
@@ -23,6 +24,12 @@ export class ArticleController {
   async getPendingArticles() {
     const pendingArticles = await this.articleService.getPendingArticles();
     return pendingArticles;
+  }
+
+  @Get('search') //Add search function
+  async searchArticles(@Query('query') query: string) {
+    const articles = await this.articleService.search(query);
+    return articles;
   }
 
   @Get('accepted-articles')
@@ -102,10 +109,10 @@ export class ArticleController {
       // Send email to Analyst
       const analystEmail = process.env.MODERATOR_EMAIL;
       await this.emailService.sendEmail(
-      analystEmail, // Analyst's email
-      'New Accepted Article in Queue',
-      `A new article titled "${article.title}" has been accepted by a moderator and is ready for analysis.`,
-    );
+        analystEmail, // Analyst's email
+        'New Accepted Article in Queue',
+        `A new article titled "${article.title}" has been accepted by a moderator and is ready for analysis.`,
+      );
     }
 
     return article;
