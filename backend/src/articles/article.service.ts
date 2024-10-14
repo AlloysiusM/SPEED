@@ -169,7 +169,7 @@ export class ArticleService {
     doi: string,
     category: string,
     summary: string,
-    status: string,
+    
   ): Promise<ExtractedArticle> {
     const newExtract = new this.extractedArticleModel({
       title,
@@ -181,7 +181,7 @@ export class ArticleService {
       doi,
       category,
       summary,
-      status,
+      
     });
     await newExtract.save(); // Save the newExtract
 
@@ -195,10 +195,4 @@ export class ArticleService {
     return newExtract;
   }
 
-  async getExtractedArticles() {
-    const getExtractedArticles = await this.extractedArticleModel.find({
-      status: 'extracted',
-    });
-    return getExtractedArticles;
-  }
 }

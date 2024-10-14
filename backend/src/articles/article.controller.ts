@@ -131,8 +131,18 @@ export class ArticleController {
     @Body('summary') summary: string,
   ) {
     try {
-      console.log(title, author, journel, yearOfPub, volume, numberOfPages, doi, category, summary);
-      
+      console.log(
+        title,
+        author,
+        journel,
+        yearOfPub,
+        volume,
+        numberOfPages,
+        doi,
+        category,
+        summary,
+      );
+
       const isDuplicate = await this.articleService.isExtractedArticleDuplicate(
         title,
         doi,
@@ -169,11 +179,5 @@ export class ArticleController {
       console.log(error);
       throw new BadRequestException('Failed to extract the article.');
     }
-  }
-
-  @Get('extracted-articles')
-  async getExtractedArticles() {
-    const getExtractedArticles = await this.articleService.getExtractedArticles();
-    return getExtractedArticles;
   }
 }
