@@ -170,4 +170,10 @@ export class ArticleController {
       throw new BadRequestException('Failed to extract the article.');
     }
   }
+
+  @Get('extracted-articles')
+  async getExtractedArticles() {
+    const getExtractedArticles = await this.articleService.getExtractedArticles();
+    return getExtractedArticles;
+  }
 }
