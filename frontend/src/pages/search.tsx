@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 
 interface Article {
   _id: string
@@ -43,7 +44,9 @@ export default function Component() {
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([])
   const [visibleColumns, setVisibleColumns] = useState<(keyof Article)[]>(columns.map(col => col.key))
-  //const [isOpen, setIsOpen] = useState(false) //Removed
+  const [previousSearches, setPreviousSearches] = useState<string[]>([])
+  const [isOpen, setIsOpen] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -68,6 +71,12 @@ export default function Component() {
     }
 
     fetchArticles()
+
+    // Load previous searches from localStorage
+    const savedSearches = localStorage.getItem('previousSearches')
+    if (savedSearches) {
+      setPreviousSearches(JSON.parse(savedSearches))
+    }
   }, [])
 
   const handleSearch = async () => {
@@ -90,6 +99,11 @@ export default function Component() {
 
       const data: Article[] = await response.json()
       setFilteredArticles(data)
+
+      // Add the search query to previous searches
+      const updatedSearches = [searchQuery, ...previousSearches.filter(s => s !== searchQuery)].slice(0, 5)
+      setPreviousSearches(updatedSearches)
+      localStorage.setItem('previousSearches', JSON.stringify(updatedSearches))
     } catch (err) {
       console.error(err)
     }
@@ -108,18 +122,42 @@ export default function Component() {
     )
   }
 
+  const handlePreviousSearchClick = (search: string) => {
+    setSearchQuery(search)
+    setIsOpen(false)
+    handleSearch()
+  }
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Article Search</h1>
       
       <div className="mb-4 flex items-center">
-        <Input
-          type="text"
-          placeholder="Search by title..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mr-2 flex-grow"
-        />
+        <div className="relative flex-grow mr-2">
+          <Command className="rounded-lg border shadow-md">
+            <CommandInput
+              placeholder="Search articles..."
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              onFocus={() => setIsOpen(true)}
+            />
+            {isOpen && (
+              <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandGroup heading="Previous Searches">
+                  {previousSearches.map((search) => (
+                    <CommandItem
+                      key={search}
+                      onSelect={() => handlePreviousSearchClick(search)}
+                    >
+                      {search}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            )}
+          </Command>
+        </div>
         <Button onClick={handleSearch} className="mr-2">Search</Button>
         <Button onClick={handleReset} variant="outline" className="mr-2">Reset</Button>
         <Dialog>
