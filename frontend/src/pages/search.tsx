@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import RatingComponent from '@/components/ui/RatingComponent';
 
 interface Article {
   _id: string;
@@ -10,8 +11,8 @@ interface Article {
   yearOfPub: string;
   volume: string;
   doi: string;
-  category: string;   // Added category
-  summary: string;    // Added summary
+  category: string; 
+  summary: string; 
 }
 
 export default function Component() {
@@ -100,6 +101,7 @@ export default function Component() {
             <TableHead>Category</TableHead>
             <TableHead className="w-1/3">Summary</TableHead>
             <TableHead>DOI</TableHead>
+            <TableHead>Rating</TableHead> {/* New column for ratings */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -113,11 +115,14 @@ export default function Component() {
                 <TableCell>{article.category}</TableCell>
                 <TableCell className="break-words">{article.summary}</TableCell>
                 <TableCell>{article.doi}</TableCell>
+                <TableCell>
+                  <RatingComponent articleId={article._id} /> {/* Integrate RatingComponent */}
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="text-center">
+              <TableCell colSpan={8} className="text-center">
                 No results found.
               </TableCell>
             </TableRow>

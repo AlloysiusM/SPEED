@@ -21,6 +21,8 @@ export class ExtractedArticle extends Document {
   category: string;
   @Prop({ required: true })
   summary: string;
+  @Prop({ default: 0 })
+  rating: number;
 }
 export const ExtractedArticleSchema =
   SchemaFactory.createForClass(ExtractedArticle);
