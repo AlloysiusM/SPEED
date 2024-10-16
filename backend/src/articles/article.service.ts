@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Article } from './schemas/article.schema';
-import { EmailService } from '../emails/email.service'; // Import EmailService
+import { EmailService } from '../emails/email.service'; 
 import { RejectedArticle } from './schemas/rejectedarticle.schema';
 import { AcceptedArticle } from './schemas/acceptedarticle.schema';
 import { ExtractedArticle } from './schemas/extractedarticles.schema';
@@ -16,7 +17,7 @@ export class ArticleService {
     private acceptedArticlesModel: Model<AcceptedArticle>,
     @InjectModel(RejectedArticle.name)
     private rejectedArticlesModel: Model<RejectedArticle>,
-    private emailService: EmailService, // Inject EmailService
+    private emailService: EmailService, 
     @InjectModel(ExtractedArticle.name)
     private extractedArticleModel: Model<ExtractedArticle>,
   ) {}
@@ -65,6 +66,18 @@ export class ArticleService {
       })
       .exec();
     return !!existingExtractedArticle;
+  }
+
+  // Rate article
+  async rateExtractedArticle(id: string, newRating: number): Promise<ExtractedArticle> {
+    const article = await this.extractedArticleModel.findById(id);
+    if (!article) {
+      throw new NotFoundException('Extracted article not found');
+    }
+
+    article.rating = newRating;
+    await article.save();
+    return article;
   }
 
   // Submit a new article

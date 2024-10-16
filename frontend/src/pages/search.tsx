@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import RatingComponent from '@/components/ui/RatingComponent';
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
@@ -197,6 +198,7 @@ export default function Component() {
               .map(column => (
                 <TableHead key={column.key}>{column.label}</TableHead>
               ))}
+            <TableHead>Rating</TableHead> {/* New column for ratings */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -210,11 +212,14 @@ export default function Component() {
                       {article[column.key]}
                     </TableCell>
                   ))}
+                <TableCell>
+                  <RatingComponent articleId={article._id} /> {/* Integrate RatingComponent */}
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={visibleColumns.length} className="text-center">
+              <TableCell colSpan={visibleColumns.length + 1} className="text-center">
                 No results found.
               </TableCell>
             </TableRow>

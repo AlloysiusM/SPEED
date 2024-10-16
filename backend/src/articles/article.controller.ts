@@ -18,15 +18,14 @@ export class ArticleController {
     private readonly articleService: ArticleService,
     private readonly emailService: EmailService,
   ) {}
-
-  // Add this method
+  
   @Get('pending')
   async getPendingArticles() {
     const pendingArticles = await this.articleService.getPendingArticles();
     return pendingArticles;
   }
 
-  @Get('search') //Add search function
+  @Get('search')
   async searchArticles(@Query('query') query: string) {
     const articles = await this.articleService.search(query);
     return articles;
@@ -42,6 +41,23 @@ export class ArticleController {
   async getAcceptedArticle(@Param('id') id: string) {
     const getAcceptedArticle = await this.articleService.getAcceptedArticle(id);
     return getAcceptedArticle;
+  }
+
+  @Post('extracted-articles/:id/rate')
+  async rateExtractedArticle(
+    @Param('id') id: string,
+    @Body('rating') rating: number,
+  ) {
+    const article = await this.articleService.rateExtractedArticle(id, rating);
+    
+    if (article) {
+      return {
+        message: 'Extracted article rated successfully!',
+        article,
+      };
+    }
+  
+    throw new BadRequestException('Failed to rate the extracted article.');
   }
 
   @Post('submit')
