@@ -1,24 +1,53 @@
-import { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState, useRef } from 'react'
+import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
 import RatingComponent from '@/components/ui/RatingComponent';
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 
 interface Article {
-  _id: string;
-  title: string;
-  author: string;
-  yearOfPub: string;
-  volume: string;
-  doi: string;
-  category: string; 
-  summary: string; 
+  _id: string
+  title: string
+  author: string
+  yearOfPub: string
+  volume: string
+  doi: string
+  category: string
+  summary: string
 }
 
+interface Column {
+  key: keyof Article
+  label: string
+}
+
+const columns: Column[] = [
+  { key: "title", label: "Title" },
+  { key: "author", label: "Author" },
+  { key: "yearOfPub", label: "Year of Publication" },
+  { key: "volume", label: "Volume" },
+  { key: "category", label: "Category" },
+  { key: "summary", label: "Summary" },
+  { key: "doi", label: "DOI" },
+]
+
 export default function Component() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<Article[]>([])
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([])
+  const [visibleColumns, setVisibleColumns] = useState<(keyof Article)[]>(columns.map(col => col.key))
+  const [previousSearches, setPreviousSearches] = useState<string[]>([])
+  const [isOpen, setIsOpen] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -28,27 +57,33 @@ export default function Component() {
           headers: {
             "Content-Type": "application/json",
           },
-        });
+        })
         
         if (!response.ok) {
-          throw new Error('Failed to fetch articles');
+          throw new Error('Failed to fetch articles')
         }
-        const data: Article[] = await response.json();
+        const data: Article[] = await response.json()
         
-        setArticles(data);
-        setFilteredArticles(data); // Initialize filtered articles
+        setArticles(data)
+        setFilteredArticles(data)
       } catch (err) {
-        console.error(err); 
+        console.error(err)
       }
-    };
+    }
 
-    fetchArticles();
-  }, []);
+    fetchArticles()
+
+    // Load previous searches from localStorage
+    const savedSearches = localStorage.getItem('previousSearches')
+    if (savedSearches) {
+      setPreviousSearches(JSON.parse(savedSearches))
+    }
+  }, [])
 
   const handleSearch = async () => {
     if (!searchQuery) {
-      setFilteredArticles(articles);
-      return;
+      setFilteredArticles(articles)
+      return
     }
     
     try {
@@ -57,50 +92,112 @@ export default function Component() {
         headers: {
           "Content-Type": "application/json",
         },
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to fetch articles');
+        throw new Error('Failed to fetch articles')
       }
 
-      const data: Article[] = await response.json();
-      setFilteredArticles(data);
+      const data: Article[] = await response.json()
+      setFilteredArticles(data)
+
+      // Add the search query to previous searches
+      const updatedSearches = [searchQuery, ...previousSearches.filter(s => s !== searchQuery)].slice(0, 5)
+      setPreviousSearches(updatedSearches)
+      localStorage.setItem('previousSearches', JSON.stringify(updatedSearches))
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
-  };
+  }
 
   const handleReset = () => {
-    setSearchQuery('');
-    setFilteredArticles(articles); 
-  };
+    setSearchQuery('')
+    setFilteredArticles(articles)
+  }
+
+  const toggleColumn = (columnKey: keyof Article) => {
+    setVisibleColumns(prev =>
+      prev.includes(columnKey)
+        ? prev.filter(key => key !== columnKey)
+        : [...prev, columnKey]
+    )
+  }
+
+  const handlePreviousSearchClick = (search: string) => {
+    setSearchQuery(search)
+    setIsOpen(false)
+    handleSearch()
+  }
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Article Search</h1>
       
       <div className="mb-4 flex items-center">
-        <input
-          type="text"
-          placeholder="Search by title..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="border border-gray-300 rounded p-2 mr-2 flex-grow"
-        />
+        <div className="relative flex-grow mr-2">
+          <Command className="rounded-lg border shadow-md">
+            <CommandInput
+              placeholder="Search articles..."
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              onFocus={() => setIsOpen(true)}
+            />
+            {isOpen && (
+              <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandGroup heading="Previous Searches">
+                  {previousSearches.map((search) => (
+                    <CommandItem
+                      key={search}
+                      onSelect={() => handlePreviousSearchClick(search)}
+                    >
+                      {search}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            )}
+          </Command>
+        </div>
         <Button onClick={handleSearch} className="mr-2">Search</Button>
-        <Button onClick={handleReset} variant="outline">Reset</Button>
+        <Button onClick={handleReset} variant="outline" className="mr-2">Reset</Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline">Customize Columns</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Choose columns to display</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              {columns.map((column) => (
+                <div key={column.key} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={column.key}
+                    checked={visibleColumns.includes(column.key)}
+                    onCheckedChange={() => toggleColumn(column.key)}
+                  />
+                  <label
+                    htmlFor={column.key}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {column.label}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Title</TableHead>
-            <TableHead>Author</TableHead>
-            <TableHead>Year of Publication</TableHead>
-            <TableHead>Volume</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead className="w-1/3">Summary</TableHead>
-            <TableHead>DOI</TableHead>
+            {columns
+              .filter(column => visibleColumns.includes(column.key))
+              .map(column => (
+                <TableHead key={column.key}>{column.label}</TableHead>
+              ))}
             <TableHead>Rating</TableHead> {/* New column for ratings */}
           </TableRow>
         </TableHeader>
@@ -108,13 +205,13 @@ export default function Component() {
           {filteredArticles.length > 0 ? (
             filteredArticles.map(article => (
               <TableRow key={article._id}>
-                <TableCell>{article.title}</TableCell>
-                <TableCell>{article.author}</TableCell>
-                <TableCell>{article.yearOfPub}</TableCell>
-                <TableCell>{article.volume}</TableCell>
-                <TableCell>{article.category}</TableCell>
-                <TableCell className="break-words">{article.summary}</TableCell>
-                <TableCell>{article.doi}</TableCell>
+                {columns
+                  .filter(column => visibleColumns.includes(column.key))
+                  .map(column => (
+                    <TableCell key={column.key} className={column.key === 'summary' ? 'break-words' : ''}>
+                      {article[column.key]}
+                    </TableCell>
+                  ))}
                 <TableCell>
                   <RatingComponent articleId={article._id} /> {/* Integrate RatingComponent */}
                 </TableCell>
@@ -122,7 +219,7 @@ export default function Component() {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={8} className="text-center">
+              <TableCell colSpan={visibleColumns.length + 1} className="text-center">
                 No results found.
               </TableCell>
             </TableRow>
@@ -130,5 +227,5 @@ export default function Component() {
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }
