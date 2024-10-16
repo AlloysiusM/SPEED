@@ -6,7 +6,7 @@ const geistSans = localFont({
   weight: "100 900",
 });
 
-//function for index so that the current pages can be easily navigated
+// Function for index so that the current pages can be easily navigated
 export default function Home() {
   return (
     <div
@@ -16,25 +16,25 @@ export default function Home() {
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a
             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="http://localhost:3000/submit"
+            href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/submit`}
           >
             Go to Submit Page
           </a>
           <a
             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="http://localhost:3000/articles"
+            href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles`}
           >
             Go to Articles List
           </a>
           <a
             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="http://localhost:3000/analystqueue"
+            href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/analystqueue`}
           >
             Go to Analyst Queue
           </a>
           <a
             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="http://localhost:3000/search"
+            href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/search`}
           >
             Go to Article Search
           </a>

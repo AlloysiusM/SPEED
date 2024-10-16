@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 interface Article {
   _id: string;
@@ -21,7 +21,7 @@ export default function Component() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch("http://localhost:8082/articles/accepted-articles", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/accepted-articles`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -76,13 +76,12 @@ export default function Component() {
               </TableCell>
               <TableCell>
                 <div className="flex space-x-2">
-                <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href= {`http://localhost:3000/analyst/${article._id}`}
-            >
-            Go to Analyst Page
-            </a>
-                  
+                  <a
+                    className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/analyst/${article._id}`} // Use the env variable here
+                  >
+                    Go to Analyst Page
+                  </a>
                 </div>
               </TableCell>
             </TableRow>
@@ -90,5 +89,5 @@ export default function Component() {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

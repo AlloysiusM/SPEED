@@ -22,25 +22,24 @@ export default function SubmitArticle() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-    // Submit the form data to the API
-    const response = await fetch("http://localhost:8082/articles/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    console.log(response);
-    
-    
-    if (response.ok) {
-      alert("Article submitted successfully!");
-    } else {
-      alert("Error submitting article!");
-    }
+      // Submit the form data to the API
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/submit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log(response);
+      
+      if (response.ok) {
+        alert("Article submitted successfully!");
+      } else {
+        alert("Error submitting article!");
+      }
     } catch (error) {
       console.log(error);
-      
     }
   };
 
@@ -75,7 +74,7 @@ export default function SubmitArticle() {
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1" htmlFor="journel">Journel</label>
           <input
-            type="journel"
+            type="text" // Fixed input type from "journel" to "text"
             id="journel"
             name="journel"
             value={formData.journel}
@@ -87,7 +86,7 @@ export default function SubmitArticle() {
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1" htmlFor="yearOfPub">Year of Publication</label>
           <input
-            type="yearOfPub"
+            type="text" // Fixed input type from "yearOfPub" to "text"
             id="yearOfPub"
             name="yearOfPub"
             value={formData.yearOfPub}
@@ -99,7 +98,7 @@ export default function SubmitArticle() {
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1" htmlFor="volume">Volume</label>
           <input
-            type="volume"
+            type="text" // Fixed input type from "volume" to "text"
             id="volume"
             name="volume"
             value={formData.volume}
@@ -111,7 +110,7 @@ export default function SubmitArticle() {
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1" htmlFor="numberOfPages">Number of Pages</label>
           <input
-            type="numberOfPages"
+            type="text" // Fixed input type from "numberOfPages" to "text"
             id="numberOfPages"
             name="numberOfPages"
             value={formData.numberOfPages}
@@ -123,7 +122,7 @@ export default function SubmitArticle() {
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1" htmlFor="doi">DOI</label>
           <input
-            type="doi"
+            type="text" // Fixed input type from "doi" to "text"
             id="doi"
             name="doi"
             value={formData.doi}
@@ -154,4 +153,3 @@ export default function SubmitArticle() {
     </div>
   );
 }
-

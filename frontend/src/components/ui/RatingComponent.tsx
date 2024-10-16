@@ -14,12 +14,12 @@ const RatingComponent: React.FC<RatingComponentProps> = ({ articleId }) => {
   useEffect(() => {
     const fetchCurrentRating = async () => {
       try {
-        const response = await fetch(`http://localhost:8082/articles/extracted-articles/${articleId}/rating`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/extracted-articles/${articleId}/rating`);
         if (!response.ok) {
           throw new Error('Failed to fetch current rating');
         }
         const data = await response.json();
-        setRating(data.rating); 
+        setRating(data.rating);
 
         // Check if the user has already rated the article
         if (data.rating > 0) {
@@ -38,7 +38,7 @@ const RatingComponent: React.FC<RatingComponentProps> = ({ articleId }) => {
       alert('You have already rated this article!'); // Alert user if they try to rate again
       return;
     }
-    
+
     if (window.confirm('Do you want to rate this article?')) { // Prompt user for confirmation
       setIsPromptVisible(true); // Show rating stars if user confirms
       submitRating(value); // Submit the rating to the server
@@ -55,7 +55,7 @@ const RatingComponent: React.FC<RatingComponentProps> = ({ articleId }) => {
 
   const submitRating = async (value: number) => {
     try {
-      const response = await fetch(`http://localhost:8082/articles/extracted-articles/${articleId}/rate`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/extracted-articles/${articleId}/rate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

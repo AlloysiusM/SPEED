@@ -27,29 +27,24 @@ export default function SubmitArticle() {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    try {
-      e.preventDefault();
-    // Submit the form data to the API
-    const response = await fetch("http://localhost:8082/articles/submit-extracted-articles", {
+    e.preventDefault(); // Prevent default form submission behavior
+    
+    // Submit the form data to the API using the environment variable
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/submit-extracted-articles`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
+    
     console.log(formData);
-    
     console.log(response);
-    
     
     if (response.ok) {
       alert("Article Analysed Successfully!");
     } else {
       alert("Error Submitting Analysed Article!");
-    }
-    } catch (error) {
-      console.log(error);
-      
     }
   };
 
@@ -174,4 +169,3 @@ export default function SubmitArticle() {
     </div>
   );
 }
-

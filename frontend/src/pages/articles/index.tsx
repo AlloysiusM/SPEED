@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { CheckIcon, XIcon } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { CheckIcon, XIcon } from 'lucide-react';
 
-// Updated Article interface with additional fields
 interface Article {
   _id: string;
   title: string;
   author: string;
-  journel: string; // Correct spelling of "journal"
+  journel: string; 
   yearOfPub: string;
   volume: string;
   numberOfPages: string;
@@ -18,17 +17,18 @@ interface Article {
 }
 
 export default function Component() {
-  const [articles, setArticles] = useState<Article[]>([])
+  const [articles, setArticles] = useState<Article[]>([]);
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL; 
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch("http://localhost:8082/articles/pending", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+        const response = await fetch(`${backendUrl}/articles/pending`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         
         if (!response.ok) {
           throw new Error('Failed to fetch articles');
@@ -38,16 +38,16 @@ export default function Component() {
         
         setArticles(data);
       } catch (err) {
-        console.error(err); // Handle error appropriately
+        console.error(err); 
       }
     };
 
     fetchArticles();
-  }, []);
+  }, [backendUrl]);
   
   const handleAccept = async (articleId: string) => {
     try {
-      const response = await fetch(`http://localhost:8082/articles/${articleId}/accept`, {
+      const response = await fetch(`${backendUrl}/articles/${articleId}/accept`, {
         method: "PUT", // Use PUT method
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,6 @@ export default function Component() {
       const acceptedArticle = await response.json();
       console.log('Accepted article:', acceptedArticle);
   
-      // Optionally update the articles list after accepting
       setArticles(prevArticles =>
         prevArticles.filter(article => article._id !== articleId)
       );
@@ -72,8 +71,8 @@ export default function Component() {
 
   const handleReject = async (articleId: string) => {
     try {
-      const response = await fetch(`http://localhost:8082/articles/${articleId}/reject`, {
-        method: "PUT", // Use PUT method
+      const response = await fetch(`${backendUrl}/articles/${articleId}/reject`, {
+        method: "PUT", 
         headers: {
           "Content-Type": "application/json",
         },
@@ -86,7 +85,6 @@ export default function Component() {
       const rejectedArticle = await response.json();
       console.log('Rejected article:', rejectedArticle);
   
-      // Optionally update the articles list after rejecting
       setArticles(prevArticles =>
         prevArticles.filter(article => article._id !== articleId)
       );
@@ -154,5 +152,5 @@ export default function Component() {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

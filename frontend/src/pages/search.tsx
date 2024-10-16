@@ -49,7 +49,7 @@ export default function Component() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch("http://localhost:8082/articles/search", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/search`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export default function Component() {
     }
     
     try {
-      const response = await fetch(`http://localhost:8082/articles/search?query=${searchQuery}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/search?query=${searchQuery}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -209,7 +209,7 @@ export default function Component() {
               .map(column => (
                 <TableHead key={column.key}>{column.label}</TableHead>
               ))}
-            <TableHead>Rating</TableHead> {}
+            <TableHead>Rating</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -224,7 +224,7 @@ export default function Component() {
                     </TableCell>
                   ))}
                 <TableCell>
-                  <RatingComponent articleId={article._id} /> {}
+                  <RatingComponent articleId={article._id} />
                 </TableCell>
               </TableRow>
             ))
