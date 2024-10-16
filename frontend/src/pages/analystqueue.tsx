@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { useParams } from 'next/navigation';
 
 interface Article {
   _id: string;

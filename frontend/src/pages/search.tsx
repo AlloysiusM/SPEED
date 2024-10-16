@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import RatingComponent from '@/components/ui/RatingComponent';
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -46,7 +45,6 @@ export default function Component() {
   const [visibleColumns, setVisibleColumns] = useState<(keyof Article)[]>(columns.map(col => col.key));
   const [previousSearches, setPreviousSearches] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchArticles = async () => {
