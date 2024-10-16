@@ -26,6 +26,18 @@ export default function Home() {
           >
             Go to Articles List
           </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+            href="http://localhost:3000/analystqueue"
+          >
+            Go to Analyst Queue
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+            href="http://localhost:3000/search"
+          >
+            Go to Article Search
+          </a>
         </div>
       </main>
     </div>

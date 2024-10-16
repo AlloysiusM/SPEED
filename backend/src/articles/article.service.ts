@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Article } from './schemas/article.schema';
-import { EmailService } from '../emails/email.service'; // Import EmailService
+import { EmailService } from '../emails/email.service'; 
 import { RejectedArticle } from './schemas/rejectedarticle.schema';
 import { AcceptedArticle } from './schemas/acceptedarticle.schema';
+import { ExtractedArticle } from './schemas/extractedarticles.schema';
 import { constants } from 'buffer';
 
 @Injectable()
@@ -15,7 +17,9 @@ export class ArticleService {
     private acceptedArticlesModel: Model<AcceptedArticle>,
     @InjectModel(RejectedArticle.name)
     private rejectedArticlesModel: Model<RejectedArticle>,
-    private emailService: EmailService, // Inject EmailService
+    private emailService: EmailService, 
+    @InjectModel(ExtractedArticle.name)
+    private extractedArticleModel: Model<ExtractedArticle>,
   ) {}
 
   async getPendingArticles() {
@@ -23,6 +27,21 @@ export class ArticleService {
       status: 'pending',
     });
     return pendingArticles;
+  }
+
+  async getAcceptedArticles() {
+    const getAcceptedArticles = await this.acceptedArticlesModel.find({
+      status: 'accepted',
+    });
+    return getAcceptedArticles;
+  }
+
+  async getAcceptedArticle(id: string) {
+    const getAcceptedArticle = await this.acceptedArticlesModel.find({
+      status: 'accepted',
+      _id: new Types.ObjectId(id),
+    });
+    return getAcceptedArticle;
   }
 
   // Check if the article is already in the queue or rejected
@@ -36,6 +55,31 @@ export class ArticleService {
     return !!existingArticle;
   }
 
+  // Check if the article is already extracted
+  async isExtractedArticleDuplicate(
+    title: string,
+    doi: string,
+  ): Promise<boolean> {
+    const existingExtractedArticle = await this.extractedArticleModel
+      .findOne({
+        $or: [{ title: title }, { doi: doi }],
+      })
+      .exec();
+    return !!existingExtractedArticle;
+  }
+
+  // Rate article
+  async rateExtractedArticle(id: string, newRating: number): Promise<ExtractedArticle> {
+    const article = await this.extractedArticleModel.findById(id);
+    if (!article) {
+      throw new NotFoundException('Extracted article not found');
+    }
+
+    article.rating = newRating;
+    await article.save();
+    return article;
+  }
+
   // Submit a new article
   async submitArticle(
     title: string,
@@ -47,14 +91,23 @@ export class ArticleService {
     doi: string,
     email: string,
   ): Promise<Article> {
-    const newArticle = new this.articleModel({ title, author, journel, yearOfPub, volume, numberOfPages, doi, email });
+    const newArticle = new this.articleModel({
+      title,
+      author,
+      journel,
+      yearOfPub,
+      volume,
+      numberOfPages,
+      doi,
+      email,
+    });
     await newArticle.save(); // Save the article
 
     // Notify the moderator about the new article submission
     await this.emailService.sendEmail(
       process.env.MODERATOR_EMAIL, // Moderator's email address
       'New Article Submitted',
-      `A new article titled "${newArticle.title}" has been submitted by ${newArticle.author}.`
+      `A new article titled "${newArticle.title}" has been submitted by ${newArticle.author}.`,
     );
 
     return newArticle;
@@ -117,4 +170,57 @@ export class ArticleService {
 
     return updatedArticle;
   }
+
+  // Submit a new extracted article
+  async extractArticle(
+    title: string,
+    author: string,
+    journel: string,
+    yearOfPub: string,
+    volume: string,
+    numberOfPages: string,
+    doi: string,
+    category: string,
+    summary: string,
+    
+  ): Promise<ExtractedArticle> {
+    const newExtract = new this.extractedArticleModel({
+      title,
+      author,
+      journel,
+      yearOfPub,
+      volume,
+      numberOfPages,
+      doi,
+      category,
+      summary,
+      
+    });
+    await newExtract.save(); // Save the newExtract
+
+    // Notify the moderator about the new newExtract submission
+    /*await this.emailService.sendEmail(
+      process.env.MODERATOR_EMAIL, // Moderator's email address newExtract
+      'New Article Submitted',
+      `A new article titled "${newExtract.title}" has been submitted by ${newExtract.author}.`
+    );*/
+
+    return newExtract;
+  }
+
+  // Search for extracted articles
+  // Search function to find articles by title or author
+  async search(query: string): Promise<ExtractedArticle[]> {
+    const searchRegex = new RegExp(query, 'i'); // 'i' flag makes the search case-insensitive
+
+    return await this.extractedArticleModel
+      .find({
+        $or: [
+          { title: { $regex: searchRegex } }, // Search by title
+          { author: { $regex: searchRegex } }, // Search by author
+      ],
+      })
+      .exec();
+  }
+
 }

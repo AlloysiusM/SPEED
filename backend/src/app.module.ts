@@ -16,6 +16,11 @@ import {
   RejectedArticleSchema,
 } from './articles/schemas/rejectedarticle.schema';
 
+import {
+  ExtractedArticle,
+  ExtractedArticleSchema,
+} from './articles/schemas/extractedarticles.schema';
+
 @Module({
   imports: [
     ConfigModule.forRoot(), // Load environment variables
@@ -24,6 +29,7 @@ import {
       { name: Article.name, schema: ArticleSchema },
       { name: AcceptedArticle.name, schema: AcceptedArticleSchema },
       { name: RejectedArticle.name, schema: RejectedArticleSchema },
+      { name: ExtractedArticle.name, schema: ExtractedArticleSchema },
     ]),
     EmailModule, // Register EmailModule
   ],
