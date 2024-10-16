@@ -19,14 +19,13 @@ export class ArticleController {
     private readonly emailService: EmailService,
   ) {}
   
-  // Add this method
   @Get('pending')
   async getPendingArticles() {
     const pendingArticles = await this.articleService.getPendingArticles();
     return pendingArticles;
   }
 
-  @Get('search') //Add search function
+  @Get('search')
   async searchArticles(@Query('query') query: string) {
     const articles = await this.articleService.search(query);
     return articles;

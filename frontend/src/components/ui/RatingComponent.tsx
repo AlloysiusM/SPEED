@@ -56,7 +56,7 @@ const RatingComponent: React.FC<RatingComponentProps> = ({ articleId }) => {
   const submitRating = async (value: number) => {
     try {
       const response = await fetch(`http://localhost:8082/articles/extracted-articles/${articleId}/rate`, {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
