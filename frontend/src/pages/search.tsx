@@ -1,33 +1,32 @@
-import { useEffect, useState, useRef } from 'react'
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState, useRef } from 'react';
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import RatingComponent from '@/components/ui/RatingComponent';
-import { Checkbox } from "@/components/ui/checkbox"
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+} from "@/components/ui/dialog";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 interface Article {
-  _id: string
-  title: string
-  author: string
-  yearOfPub: string
-  volume: string
-  doi: string
-  category: string
-  summary: string
+  _id: string;
+  title: string;
+  author: string;
+  yearOfPub: string;
+  volume: string;
+  doi: string;
+  category: string;
+  summary: string;
 }
 
 interface Column {
-  key: keyof Article
-  label: string
+  key: keyof Article;
+  label: string;
 }
 
 const columns: Column[] = [
@@ -38,16 +37,16 @@ const columns: Column[] = [
   { key: "category", label: "Category" },
   { key: "summary", label: "Summary" },
   { key: "doi", label: "DOI" },
-]
+];
 
 export default function Component() {
-  const [articles, setArticles] = useState<Article[]>([])
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [filteredArticles, setFilteredArticles] = useState<Article[]>([])
-  const [visibleColumns, setVisibleColumns] = useState<(keyof Article)[]>(columns.map(col => col.key))
-  const [previousSearches, setPreviousSearches] = useState<string[]>([])
-  const [isOpen, setIsOpen] = useState(false)
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+  const [visibleColumns, setVisibleColumns] = useState<(keyof Article)[]>(columns.map(col => col.key));
+  const [previousSearches, setPreviousSearches] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -57,33 +56,34 @@ export default function Component() {
           headers: {
             "Content-Type": "application/json",
           },
-        })
+        });
         
         if (!response.ok) {
-          throw new Error('Failed to fetch articles')
+          throw new Error('Failed to fetch articles');
         }
-        const data: Article[] = await response.json()
+        const data: Article[] = await response.json();
         
-        setArticles(data)
-        setFilteredArticles(data)
+        setArticles(data);
+        setFilteredArticles(data);
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
-    }
+    };
 
-    fetchArticles()
+    fetchArticles();
 
     // Load previous searches from localStorage
-    const savedSearches = localStorage.getItem('previousSearches')
+    const savedSearches = localStorage.getItem('previousSearches');
     if (savedSearches) {
-      setPreviousSearches(JSON.parse(savedSearches))
+      const parsedSearches = JSON.parse(savedSearches);
+      setPreviousSearches(Array.isArray(parsedSearches) ? parsedSearches : []);
     }
-  }, [])
+  }, []);
 
   const handleSearch = async () => {
-    if (!searchQuery) {
-      setFilteredArticles(articles)
-      return
+    // Prevent searching with an empty query
+    if (!searchQuery.trim()) {
+      return;
     }
     
     try {
@@ -92,42 +92,50 @@ export default function Component() {
         headers: {
           "Content-Type": "application/json",
         },
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch articles')
+        throw new Error('Failed to fetch articles');
       }
 
-      const data: Article[] = await response.json()
-      setFilteredArticles(data)
+      const data: Article[] = await response.json();
+      setFilteredArticles(data);
 
       // Add the search query to previous searches
-      const updatedSearches = [searchQuery, ...previousSearches.filter(s => s !== searchQuery)].slice(0, 5)
-      setPreviousSearches(updatedSearches)
-      localStorage.setItem('previousSearches', JSON.stringify(updatedSearches))
+      const updatedSearches = [searchQuery, ...previousSearches.filter(s => s !== searchQuery)].slice(0, 5);
+      setPreviousSearches(updatedSearches);
+      localStorage.setItem('previousSearches', JSON.stringify(updatedSearches));
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
 
   const handleReset = () => {
-    setSearchQuery('')
-    setFilteredArticles(articles)
-  }
+    setSearchQuery('');
+    setFilteredArticles(articles);
+  };
 
   const toggleColumn = (columnKey: keyof Article) => {
     setVisibleColumns(prev =>
       prev.includes(columnKey)
         ? prev.filter(key => key !== columnKey)
         : [...prev, columnKey]
-    )
-  }
+    );
+  };
 
   const handlePreviousSearchClick = (search: string) => {
-    setSearchQuery(search)
-    setIsOpen(false)
-    handleSearch()
-  }
+    setSearchQuery(search);
+    setIsOpen(false);
+    handleSearch();
+  };
+
+  // Function to handle Enter key press
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSearch(); 
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -141,19 +149,24 @@ export default function Component() {
               value={searchQuery}
               onValueChange={setSearchQuery}
               onFocus={() => setIsOpen(true)}
+              onKeyDown={handleKeyDown}
             />
             {isOpen && (
               <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup heading="Previous Searches">
-                  {previousSearches.map((search) => (
-                    <CommandItem
-                      key={search}
-                      onSelect={() => handlePreviousSearchClick(search)}
-                    >
-                      {search}
-                    </CommandItem>
-                  ))}
+                  {Array.isArray(previousSearches) && previousSearches.length > 0 ? (
+                    previousSearches.map((search) => (
+                      <CommandItem
+                        key={search}
+                        onSelect={() => handlePreviousSearchClick(search)}
+                      >
+                        {search}
+                      </CommandItem>
+                    ))
+                  ) : (
+                    <CommandEmpty>No previous searches found.</CommandEmpty>
+                  )}
                 </CommandGroup>
               </CommandList>
             )}
@@ -198,7 +211,7 @@ export default function Component() {
               .map(column => (
                 <TableHead key={column.key}>{column.label}</TableHead>
               ))}
-            <TableHead>Rating</TableHead> {/* New column for ratings */}
+            <TableHead>Rating</TableHead> {}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -213,7 +226,7 @@ export default function Component() {
                     </TableCell>
                   ))}
                 <TableCell>
-                  <RatingComponent articleId={article._id} /> {/* Integrate RatingComponent */}
+                  <RatingComponent articleId={article._id} /> {}
                 </TableCell>
               </TableRow>
             ))
@@ -227,5 +240,5 @@ export default function Component() {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
