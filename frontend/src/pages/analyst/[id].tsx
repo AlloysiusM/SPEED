@@ -137,7 +137,7 @@ export default function SubmitArticle() {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1" htmlFor="category">Category</label>
+          <label className="block text-sm font-medium mb-1" htmlFor="category">Software Practice</label>
           <input
             type="text"
             id="category"
@@ -149,7 +149,7 @@ export default function SubmitArticle() {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1" htmlFor="summary">Summary</label>
+          <label className="block text-sm font-medium mb-1" htmlFor="summary">Claim/Evidence</label>
           <input
             id="summary"
             name="summary"

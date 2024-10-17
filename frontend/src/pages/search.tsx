@@ -33,8 +33,8 @@ const columns: Column[] = [
   { key: "author", label: "Author" },
   { key: "yearOfPub", label: "Year of Publication" },
   { key: "volume", label: "Volume" },
-  { key: "category", label: "Category" },
-  { key: "summary", label: "Summary" },
+  { key: "category", label: "Software Practice" },
+  { key: "summary", label: "Claim/Evidence" },
   { key: "doi", label: "DOI" },
 ];
 

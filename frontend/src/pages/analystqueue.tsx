@@ -55,7 +55,6 @@ export default function Component() {
             <TableHead>Volume</TableHead>
             <TableHead>Number of Pages</TableHead>
             <TableHead>DOI</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -69,11 +68,6 @@ export default function Component() {
               <TableCell>{article.volume}</TableCell>
               <TableCell>{article.numberOfPages}</TableCell>
               <TableCell>{article.doi}</TableCell>
-              <TableCell>
-                <Badge>
-                  {article.status}
-                </Badge>
-              </TableCell>
               <TableCell>
                 <div className="flex space-x-2">
                   <a
