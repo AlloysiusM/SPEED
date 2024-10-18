@@ -8,6 +8,9 @@ const geistSans = localFont({
 
 // Function for index so that the current pages can be easily navigated
 export default function Home() {
+
+  console.log(process.env.NEXT_PUBLIC_FRONTEND_URL);
+
   return (
     <div
       className={`${geistSans.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
