@@ -68,6 +68,10 @@ export class ArticleService {
     return !!existingExtractedArticle;
   }
 
+  async getAllArticles(): Promise<Article[]> {
+    return await this.articleModel.find().exec(); // Fetch all articles from the database
+  }
+
   // Rate article
   async rateExtractedArticle(id: string, newRating: number): Promise<ExtractedArticle> {
     const article = await this.extractedArticleModel.findById(id);
