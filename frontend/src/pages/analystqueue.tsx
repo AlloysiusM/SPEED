@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import Navbar from '../components/analystqueuenavbar';
 
 interface Article {
   _id: string;
@@ -44,6 +44,7 @@ export default function Component() {
 
   return (
     <div className="container mx-auto p-4">
+      <Navbar />
       <h1 className="text-2xl font-bold mb-4">Analyst Article Queue</h1>
       <Table>
         <TableHeader>

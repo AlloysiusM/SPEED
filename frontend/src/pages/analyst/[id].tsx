@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from 'next/router';
+import Navbar from '@/components/navbar'; 
 
 export default function SubmitArticle() {
   const router = useRouter();
@@ -50,6 +51,7 @@ export default function SubmitArticle() {
 
   return (
     <div className="max-w-md mx-auto my-10 p-5 border border-gray-300 rounded">
+      <Navbar />
       <h1 className="text-2xl font-bold mb-4">Extracted Article Information</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

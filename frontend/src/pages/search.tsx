@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import Navbar from '../components/searchnavbar'; 
 
 interface Article {
   _id: string;
@@ -137,6 +138,7 @@ export default function Component() {
 
   return (
     <div className="container mx-auto p-4">
+      <Navbar />
       <h1 className="text-2xl font-bold mb-4">Article Search</h1>
       
       <div className="mb-4 flex items-center">

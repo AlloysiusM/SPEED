@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { CheckIcon, XIcon } from 'lucide-react';
+import Navbar from '@/components/articleslistnavbar'; 
 
 interface Article {
   _id: string;
@@ -95,6 +96,7 @@ export default function Component() {
 
   return (
     <div className="container mx-auto p-4">
+      <Navbar />
       <h1 className="text-2xl font-bold mb-4">Moderator Article List</h1>
       <Table>
         <TableHeader>
