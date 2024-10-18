@@ -220,8 +220,7 @@ export class ArticleService {
     return await this.extractedArticleModel
       .find({
         $or: [
-          { title: { $regex: searchRegex } }, // Search by title
-          { author: { $regex: searchRegex } }, // Search by author
+          { category: { $regex: searchRegex } }, // Search by Software Practice
       ],
       })
       .exec();
