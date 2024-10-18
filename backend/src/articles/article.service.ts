@@ -69,7 +69,7 @@ export class ArticleService {
   }
 
   async getAllArticles(): Promise<Article[]> {
-    return await this.articleModel.find().exec(); // Fetch all articles from the database
+    return await this.articleModel.find().exec(); 
   }
 
   // Rate article

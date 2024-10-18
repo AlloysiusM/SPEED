@@ -25,10 +25,12 @@ export class ArticleController {
     return pendingArticles;
   }
 
-  @Get() // This is the route for /articles
-async getAllArticles() {
-  return await this.articleService.getAllArticles(); // Call the service method to fetch articles
-}
+  @Get()
+  async getAllArticles() {
+    const allArticles = await this.articleService.getAllArticles();
+    return allArticles;
+  }
+  
 
   @Get('search')
   async searchArticles(@Query('query') query: string) {

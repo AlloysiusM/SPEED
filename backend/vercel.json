@@ -9,11 +9,11 @@
   "routes": [
     {
       "src": "/articles/(.*)",
-      "dest": "/articles/$1"
+      "dest": "src/main.ts"
     },
     {
       "src": "/(.*)",
-      "dest": "/$1" 
+      "dest": "src/main.ts"
     }
   ]
 }
