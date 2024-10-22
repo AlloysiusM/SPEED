@@ -5,7 +5,7 @@ Hello and Welcome to group W202-8 repository. This project has been developed fo
 
 ### W202-8 Group members:
 - Alloysius Manlutac 
-- Caleb S
+- Caleb Simmons
 - Edward Voung
 - Sukhdev Sukh
 
